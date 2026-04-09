@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Offline Internet Capsule - A portable, self-contained layer of the internet that works offline. Access medical guides, survival protocols, and educational content anywhere.">
+  <title>Offline Internet Capsule</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ─── CSS Reset & Variables ─────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-primary: #0a0e1a;
+      --bg-secondary: #111827;
+      --bg-card: rgba(17, 24, 39, 0.7);
+      --bg-glass: rgba(255, 255, 255, 0.04);
+      --bg-glass-hover: rgba(255, 255, 255, 0.08);
+      --border-glass: rgba(255, 255, 255, 0.08);
+      --border-active: rgba(255, 255, 255, 0.15);
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent-blue: #3b82f6;
+      --accent-purple: #8b5cf6;
+      --accent-emerald: #10b981;
+      --accent-red: #ef4444;
+      --accent-amber: #f59e0b;
+      --accent-pink: #ec4899;
+      --gradient-hero: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+      --gradient-medical: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
+      --gradient-survival: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+      --gradient-navigation: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+      --gradient-education: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+      --shadow-lg: 0 20px 60px rgba(0,0,0,0.5);
+      --shadow-glow-blue: 0 0 30px rgba(59,130,246,0.15);
+      --shadow-glow-purple: 0 0 30px rgba(139,92,246,0.15);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+      --radius-full: 9999px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ─── Background Effects ───────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at 20% 50%, rgba(59,130,246,0.06) 0%, transparent 50%),
+                  radial-gradient(ellipse at 80% 20%, rgba(139,92,246,0.06) 0%, transparent 50%),
+                  radial-gradient(ellipse at 40% 80%, rgba(236,72,153,0.04) 0%, transparent 50%);
+      z-index: 0;
+      animation: bgShift 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes bgShift {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      100% { transform: translate(-2%, -1%) rotate(1deg); }
+    }
+
+    /* ─── Layout ───────────────────────────────────────────── */
+    #app {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ─── Header ───────────────────────────────────────────── */
+    .header {
+      padding: 20px 20px 0;
+      text-align: center;
+      position: relative;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: var(--gradient-hero);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: var(--shadow-glow-blue);
+    }
+
+    .logo-text {
+      text-align: left;
+    }
+
+    .logo-text h1 {
+      font-size: 18px;
+      font-weight: 700;
+      background: var(--gradient-hero);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+    }
+
+    .logo-text span {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 400;
+      letter-spacing: 0.5px;
+    }
+
+    /* ─── Status Badge ─────────────────────────────────────── */
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent-emerald);
+      cursor: default;
+      transition: var(--transition);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-emerald);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16,185,129,0.4); }
+      50% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(16,185,129,0); }
+    }
+
+    /* ─── Tabs ─────────────────────────────────────────────── */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      padding: 4px;
+      background: var(--bg-glass);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-glass);
+      margin: 12px 20px 0;
+      backdrop-filter: blur(12px);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px 16px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: var(--radius-md);
+      transition: var(--transition);
+    }
+
+    .tab-btn:hover { color: var(--text-primary); background: var(--bg-glass-hover); }
+    .tab-btn.active {
+      color: var(--text-primary);
+      background: rgba(59,130,246,0.15);
+      box-shadow: inset 0 0 0 1px rgba(59,130,246,0.2);
+    }
+
+    /* ─── Tab Panels ───────────────────────────────────────── */
+    .tab-panel { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+    .tab-panel.active { display: flex; }
+
+    /* ─── Category Pills ───────────────────────────────────── */
+    .category-bar {
+      display: flex;
+      gap: 8px;
+      padding: 16px 20px 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .category-bar::-webkit-scrollbar { display: none; }
+
+    .cat-pill {
+      flex-shrink: 0;
+      padding: 7px 16px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-glass);
+      background: var(--bg-glass);
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+
+    .cat-pill:hover { border-color: var(--border-active); color: var(--text-primary); }
+    .cat-pill.active { color: #fff; border-color: transparent; }
+    .cat-pill[data-cat="all"].active { background: var(--gradient-hero); }
+    .cat-pill[data-cat="medical"].active { background: var(--gradient-medical); }
+    .cat-pill[data-cat="survival"].active { background: var(--gradient-survival); }
+    .cat-pill[data-cat="navigation"].active { background: var(--gradient-navigation); }
+    .cat-pill[data-cat="education"].active { background: var(--gradient-education); }
+
+    /* ─── Chat Area ────────────────────────────────────────── */
+    .chat-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.08) transparent;
+    }
+
+    .chat-area::-webkit-scrollbar { width: 6px; }
+    .chat-area::-webkit-scrollbar-track { background: transparent; }
+    .chat-area::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+
+    /* ─── Messages ─────────────────────────────────────────── */
+    .message {
+      max-width: 88%;
+      animation: msgIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes msgIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .message.user {
+      align-self: flex-end;
+    }
+
+    .message.assistant {
+      align-self: flex-start;
+    }
+
+    .msg-bubble {
+      padding: 14px 18px;
+      border-radius: var(--radius-lg);
+      font-size: 14px;
+      line-height: 1.7;
+      word-wrap: break-word;
+    }
+
+    .message.user .msg-bubble {
+      background: linear-gradient(135deg, rgba(59,130,246,0.2) 0%, rgba(139,92,246,0.2) 100%);
+      border: 1px solid rgba(59,130,246,0.2);
+      border-bottom-right-radius: 4px;
+      color: var(--text-primary);
+    }
+
+    .message.assistant .msg-bubble {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-bottom-left-radius: 4px;
+      color: var(--text-primary);
+      backdrop-filter: blur(12px);
+    }
+
+    .msg-bubble h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      background: var(--gradient-hero);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .msg-bubble strong { color: var(--accent-blue); font-weight: 600; }
+    .msg-bubble em { color: var(--accent-amber); }
+
+    .msg-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .confidence-bar {
+      height: 4px;
+      width: 60px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .confidence-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.6s ease;
+    }
+
+    .sources-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .source-chip {
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-glass);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ─── Typing Indicator ────────────────────────────────── */
+    .typing-indicator {
+      display: none;
+      align-self: flex-start;
+      padding: 14px 20px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      border-bottom-left-radius: 4px;
+      backdrop-filter: blur(12px);
+    }
+
+    .typing-indicator.show { display: flex; }
+
+    .typing-dots {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .typing-dots span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-blue);
+      animation: typingBounce 1.4s ease-in-out infinite;
+    }
+
+    .typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.3; }
+      30% { transform: translateY(-6px); opacity: 1; }
+    }
+
+    /* ─── Welcome Message ──────────────────────────────────── */
+    .welcome {
+      text-align: center;
+      padding: 40px 20px;
+      animation: fadeIn 0.6s ease both;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .welcome-icon {
+      font-size: 52px;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 0 20px rgba(59,130,246,0.3));
+    }
+
+    .welcome h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      background: var(--gradient-hero);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .welcome p {
+      color: var(--text-secondary);
+      font-size: 14px;
+      max-width: 400px;
+      margin: 0 auto 24px;
+    }
+
+    .quick-prompts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .quick-prompt {
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-glass);
+      background: var(--bg-glass);
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .quick-prompt:hover {
+      border-color: var(--accent-blue);
+      color: var(--text-primary);
+      background: rgba(59,130,246,0.1);
+      transform: translateY(-1px);
+    }
+
+    /* ─── Input Bar ────────────────────────────────────────── */
+    .input-bar {
+      padding: 12px 20px 24px;
+      position: relative;
+    }
+
+    .input-wrapper {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      padding: 6px 6px 6px 18px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-xl);
+      backdrop-filter: blur(16px);
+      transition: var(--transition);
+    }
+
+    .input-wrapper:focus-within {
+      border-color: rgba(59,130,246,0.3);
+      box-shadow: var(--shadow-glow-blue);
+    }
+
+    #chat-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 14px;
+      padding: 10px 0;
+      outline: none;
+      resize: none;
+      min-height: 20px;
+      max-height: 120px;
+    }
+
+    #chat-input::placeholder { color: var(--text-muted); }
+
+    #send-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-md);
+      border: none;
+      background: var(--gradient-hero);
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+
+    #send-btn:hover { transform: scale(1.05); box-shadow: var(--shadow-glow-blue); }
+    #send-btn:active { transform: scale(0.95); }
+    #send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    #send-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* ─── Emergency Cards ──────────────────────────────────── */
+    .emergency-panel {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px;
+    }
+
+    .emergency-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .emergency-card {
+      padding: 20px;
+      border-radius: var(--radius-lg);
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      cursor: pointer;
+      transition: var(--transition);
+      backdrop-filter: blur(12px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .emergency-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .emergency-card[data-cat="medical"]::before { background: var(--gradient-medical); }
+    .emergency-card[data-cat="survival"]::before { background: var(--gradient-survival); }
+
+    .emergency-card:hover {
+      border-color: var(--border-active);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .emergency-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .emergency-card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .emergency-card-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .emergency-card-cat {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: capitalize;
+    }
+
+    .emergency-steps {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .emergency-steps li {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .step-num {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(59,130,246,0.15);
+      color: var(--accent-blue);
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .emergency-warning {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.15);
+      font-size: 12px;
+      color: var(--accent-red);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ─── Expanded Emergency View ──────────────────────────── */
+    .emergency-detail-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .emergency-detail-overlay.show {
+      display: flex;
+    }
+
+    .emergency-detail-content {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      max-width: 520px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .detail-close {
+      float: right;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--border-glass);
+      background: var(--bg-glass);
+      color: var(--text-secondary);
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .detail-close:hover { color: var(--text-primary); background: rgba(239,68,68,0.15); }
+
+    /* ─── Info Panel ───────────────────────────────────────── */
+    .info-panel {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .info-card {
+      padding: 20px;
+      border-radius: var(--radius-lg);
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      backdrop-filter: blur(12px);
+    }
+
+    .info-card h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      background: var(--gradient-hero);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .info-card p, .info-card li {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    .info-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .info-card li::before {
+      content: '→';
+      color: var(--accent-blue);
+      margin-right: 8px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .stat {
+      text-align: center;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .stat-val {
+      font-size: 22px;
+      font-weight: 700;
+      background: var(--gradient-hero);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .version-tag {
+      display: inline-flex;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      background: rgba(59,130,246,0.1);
+      color: var(--accent-blue);
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    /* ─── Responsive ───────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .header-top { padding: 0; }
+      .logo-text h1 { font-size: 15px; }
+      .emergency-grid { grid-template-columns: 1fr; }
+      .stat-grid { grid-template-columns: repeat(3, 1fr); }
+      .message { max-width: 94%; }
+      .quick-prompts { flex-direction: column; align-items: stretch; }
+    }
+
+    @media (min-width: 641px) and (max-width: 1024px) {
+      .emergency-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ─── Markdown in messages ─────────────────────────────── */
+    .msg-bubble ul, .msg-bubble ol {
+      padding-left: 18px;
+      margin: 6px 0;
+    }
+
+    .msg-bubble li {
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .msg-bubble p {
+      margin-bottom: 6px;
+    }
+
+    .msg-bubble code {
+      background: rgba(255,255,255,0.06);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-top">
+        <div class="logo-area">
+          <div class="logo-icon">🌐</div>
+          <div class="logo-text">
+            <h1>Offline Internet Capsule</h1>
+            <span>Knowledge at your fingertips — zero internet required</span>
+          </div>
+        </div>
+        <div class="status-badge" id="status-badge">
+          <div class="status-dot"></div>
+          <span>Offline Ready</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tabs -->
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="chat" id="tab-chat">💬 Chat</button>
+      <button class="tab-btn" data-tab="emergency" id="tab-emergency">🚨 Emergency</button>
+      <button class="tab-btn" data-tab="info" id="tab-info">ℹ️ About</button>
+    </nav>
+
+    <!-- Chat Panel -->
+    <div class="tab-panel active" id="panel-chat">
+      <div class="category-bar" id="category-bar">
+        <button class="cat-pill active" data-cat="all">All Topics</button>
+        <button class="cat-pill" data-cat="medical">🏥 Medical</button>
+        <button class="cat-pill" data-cat="survival">🏕️ Survival</button>
+        <button class="cat-pill" data-cat="navigation">🧭 Navigation</button>
+        <button class="cat-pill" data-cat="education">📚 Education</button>
+      </div>
+
+      <div class="chat-area" id="chat-area">
+        <!-- Welcome -->
+        <div class="welcome" id="welcome-msg">
+          <div class="welcome-icon">🌍</div>
+          <h2>Ask me anything</h2>
+          <p>Access medical guides, survival protocols, navigation tips, and educational content — all completely offline.</p>
+          <div class="quick-prompts">
+            <button class="quick-prompt" data-q="How to perform CPR?">❤️ How to perform CPR?</button>
+            <button class="quick-prompt" data-q="How to purify water in the wild?">💧 Purify water?</button>
+            <button class="quick-prompt" data-q="How to navigate using stars?">⭐ Navigate by stars?</button>
+            <button class="quick-prompt" data-q="Explain Newton's laws of motion">📖 Newton's laws?</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Typing Indicator -->
+      <div class="typing-indicator" id="typing-indicator">
+        <div class="typing-dots">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <!-- Input -->
+      <div class="input-bar">
+        <div class="input-wrapper">
+          <input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
+          <button id="send-btn" aria-label="Send message">
+            <svg viewBox="0 0 24 24"><path d="M22 2L11 13"></path><path d="M22 2L15 22L11 13L2 9L22 2Z"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Emergency Panel -->
+    <div class="tab-panel" id="panel-emergency">
+      <div class="emergency-panel">
+        <div class="emergency-grid" id="emergency-grid">
+          <!-- Cards injected by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Panel -->
+    <div class="tab-panel" id="panel-info">
+      <div class="info-panel">
+        <div class="info-card">
+          <h3>About OIC</h3>
+          <p>The Offline Internet Capsule is a portable, self-contained knowledge engine that delivers critical information without requiring an internet connection. Powered by hybrid AI search.</p>
+          <div class="stat-grid" id="stats-grid">
+            <div class="stat">
+              <div class="stat-val" id="stat-docs">—</div>
+              <div class="stat-label">Documents</div>
+            </div>
+            <div class="stat">
+              <div class="stat-val" id="stat-cats">—</div>
+              <div class="stat-label">Categories</div>
+            </div>
+            <div class="stat">
+              <div class="stat-val"><span class="version-tag">v1.0</span></div>
+              <div class="stat-label">Version</div>
+            </div>
+          </div>
+        </div>
+        <div class="info-card">
+          <h3>How It Works</h3>
+          <ul>
+            <li>Hybrid search combines keyword (BM25) and semantic (FAISS) matching</li>
+            <li>All data lives on your device — zero cloud dependency</li>
+            <li>Structured responses with warnings, steps, and confidence scores</li>
+            <li>Pre-built emergency protocols for life-saving info</li>
+          </ul>
+        </div>
+        <div class="info-card">
+          <h3>Categories</h3>
+          <ul>
+            <li><strong style="color:var(--accent-red)">Medical</strong> — CPR, burns, snake bites, wound care, medications</li>
+            <li><strong style="color:var(--accent-emerald)">Survival</strong> — Water, fire, shelter, signaling, food, disaster prep</li>
+            <li><strong style="color:var(--accent-blue)">Navigation</strong> — Compass, stars, maps, GPS alternatives</li>
+            <li><strong style="color:var(--accent-purple)">Education</strong> — Science, math, geography, literacy, health</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Emergency Detail Overlay -->
+    <div class="emergency-detail-overlay" id="emergency-overlay">
+      <div class="emergency-detail-content" id="emergency-detail"></div>
+    </div>
+  </div>
+
+  <script>
+    /* ─── State ────────────────────────────────────────────── */
+    const API = '';  // Same origin
+    let activeCategory = null;
+    let isLoading = false;
+
+    /* ─── DOM Refs ─────────────────────────────────────────── */
+    const chatArea     = document.getElementById('chat-area');
+    const chatInput    = document.getElementById('chat-input');
+    const sendBtn      = document.getElementById('send-btn');
+    const typingInd    = document.getElementById('typing-indicator');
+    const welcomeMsg   = document.getElementById('welcome-msg');
+    const emergGrid    = document.getElementById('emergency-grid');
+    const overlay      = document.getElementById('emergency-overlay');
+    const detailEl     = document.getElementById('emergency-detail');
+
+    /* ─── Tabs ─────────────────────────────────────────────── */
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    /* ─── Category Pills ───────────────────────────────────── */
+    document.querySelectorAll('.cat-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        activeCategory = pill.dataset.cat === 'all' ? null : pill.dataset.cat;
+      });
+    });
+
+    /* ─── Quick Prompts ────────────────────────────────────── */
+    document.querySelectorAll('.quick-prompt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        chatInput.value = btn.dataset.q;
+        sendMessage();
+      });
+    });
+
+    /* ─── Send ─────────────────────────────────────────────── */
+    sendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    });
+
+    async function sendMessage() {
+      const query = chatInput.value.trim();
+      if (!query || isLoading) return;
+
+      // Hide welcome
+      if (welcomeMsg) welcomeMsg.style.display = 'none';
+
+      // Add user message
+      addMessage(query, 'user');
+      chatInput.value = '';
+      isLoading = true;
+      sendBtn.disabled = true;
+      typingInd.classList.add('show');
+      scrollToBottom();
+
+      try {
+        const res = await fetch(API + '/ask', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query, category: activeCategory }),
+        });
+
+        if (!res.ok) throw new Error(`Server error: ${res.status}`);
+
+        const data = await res.json();
+        typingInd.classList.remove('show');
+        addAssistantMessage(data);
+      } catch (err) {
+        typingInd.classList.remove('show');
+        addMessage('⚠️ Could not reach the server. Make sure the backend is running on localhost:8000.', 'assistant');
+      }
+
+      isLoading = false;
+      sendBtn.disabled = false;
+      chatInput.focus();
+      scrollToBottom();
+    }
+
+    /* ─── Message Rendering ────────────────────────────────── */
+    function addMessage(text, role) {
+      const div = document.createElement('div');
+      div.className = `message ${role}`;
+      div.innerHTML = `<div class="msg-bubble">${escapeHtml(text)}</div>`;
+      chatArea.appendChild(div);
+    }
+
+    function addAssistantMessage(data) {
+      const div = document.createElement('div');
+      div.className = 'message assistant';
+
+      const confPct = Math.round(data.confidence * 100);
+      const confColor = data.confidence > 0.7 ? 'var(--accent-emerald)' :
+                        data.confidence > 0.4 ? 'var(--accent-amber)' : 'var(--accent-red)';
+
+      let sourcesHtml = '';
+      if (data.sources && data.sources.length > 0) {
+        sourcesHtml = `<div class="sources-list">${data.sources.map(s =>
+          `<span class="source-chip">${escapeHtml(s.title)}</span>`
+        ).join('')}</div>`;
+      }
+
+      div.innerHTML = `
+        <div class="msg-bubble">
+          ${renderMarkdown(data.answer)}
+          ${sourcesHtml}
+        </div>
+        <div class="msg-meta">
+          <span>Confidence</span>
+          <div class="confidence-bar">
+            <div class="confidence-fill" style="width:${confPct}%;background:${confColor}"></div>
+          </div>
+          <span>${confPct}%</span>
+          <span>•</span>
+          <span>${data.offline ? '📡 Offline' : '🌐 Online'}</span>
+        </div>
+      `;
+
+      chatArea.appendChild(div);
+      scrollToBottom();
+    }
+
+    function renderMarkdown(text) {
+      // Basic markdown: headers, bold, italic, warnings, bullets
+      return text
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
+        .replace(/<\/ul>\s*<ul>/g, '')  // Merge adjacent ULs
+        .replace(/\n\n/g, '<br><br>')
+        .replace(/\n/g, '<br>');
+    }
+
+    function escapeHtml(str) {
+      const d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
+    }
+
+    function scrollToBottom() {
+      requestAnimationFrame(() => {
+        chatArea.scrollTop = chatArea.scrollHeight;
+      });
+    }
+
+    /* ─── Emergency Cards ──────────────────────────────────── */
+    async function loadEmergencyCards() {
+      try {
+        const res = await fetch(API + '/emergency');
+        if (!res.ok) return;
+        const cards = await res.json();
+        renderEmergencyCards(cards);
+      } catch (e) {
+        emergGrid.innerHTML = '<p style="color:var(--text-muted);text-align:center;grid-column:1/-1">Start the backend server to load emergency cards.</p>';
+      }
+    }
+
+    function renderEmergencyCards(cards) {
+      emergGrid.innerHTML = cards.map(card => `
+        <div class="emergency-card" data-cat="${card.category}" data-id="${card.id}" onclick="showEmergencyDetail(this)">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;border-radius:16px 16px 0 0;background:${card.category === 'medical' ? 'var(--gradient-medical)' : 'var(--gradient-survival)'}"></div>
+          <div class="emergency-card-header">
+            <div class="emergency-card-icon">${card.icon}</div>
+            <div>
+              <div class="emergency-card-title">${escapeHtml(card.title)}</div>
+              <div class="emergency-card-cat">${card.category}</div>
+            </div>
+          </div>
+          <ol class="emergency-steps">
+            ${card.steps.map((s, i) => `<li><span class="step-num">${i + 1}</span><span>${escapeHtml(s)}</span></li>`).join('')}
+          </ol>
+          ${card.warning ? `<div class="emergency-warning">⚠️ ${escapeHtml(card.warning)}</div>` : ''}
+        </div>
+      `).join('');
+    }
+
+    function showEmergencyDetail(el) {
+      const card = el.cloneNode(true);
+      card.style.cursor = 'default';
+      card.style.transform = 'none';
+      card.onclick = null;
+
+      detailEl.innerHTML = `<button class="detail-close" onclick="closeEmergencyDetail()">✕</button>`;
+      detailEl.appendChild(card);
+      overlay.classList.add('show');
+    }
+
+    function closeEmergencyDetail() {
+      overlay.classList.remove('show');
+    }
+
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay) closeEmergencyDetail();
+    });
+
+    /* ─── Load Stats ───────────────────────────────────────── */
+    async function loadStats() {
+      try {
+        const [healthRes, catRes] = await Promise.all([
+          fetch(API + '/health'),
+          fetch(API + '/categories'),
+        ]);
+
+        if (healthRes.ok) {
+          const health = await healthRes.json();
+          document.getElementById('stat-docs').textContent = health.documents_loaded;
+        }
+
+        if (catRes.ok) {
+          const cats = await catRes.json();
+          document.getElementById('stat-cats').textContent = cats.categories.length;
+        }
+      } catch (e) {
+        // Server not running yet — that's okay, we're offline-first
+      }
+    }
+
+    /* ─── Init ─────────────────────────────────────────────── */
+    loadEmergencyCards();
+    loadStats();
+    chatInput.focus();
+  </script>
+</body>
+</html>
