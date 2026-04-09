@@ -1,0 +1,123 @@
+[
+  {
+    "title": "Snake Bite First Aid",
+    "category": "medical",
+    "keywords": ["snake", "bite", "venom", "poison"],
+    "content": "Keep the person calm. Immobilize the limb. Do not suck venom. Seek medical help immediately."
+  },
+  {
+    "title": "Burn Treatment",
+    "category": "medical",
+    "keywords": ["burn", "fire", "injury"],
+    "content": "Cool the burn under running water for 10 minutes. Do not apply ice. Cover with a clean cloth."
+  },
+  {
+    "title": "CPR",
+    "category": "medical",
+    "keywords": ["cpr", "heart", "emergency"],
+    "content": "Push hard and fast in the center of the chest at 100 to 120 compressions per minute."
+  },
+  {
+    "title": "Bleeding Control",
+    "category": "medical",
+    "keywords": ["bleeding", "blood", "cut"],
+    "content": "Apply direct pressure to the wound. Use a clean cloth. Elevate the injured area if possible."
+  },
+  {
+    "title": "Fracture Handling",
+    "category": "medical",
+    "keywords": ["fracture", "bone", "injury"],
+    "content": "Immobilize the injured area. Do not move the limb unnecessarily. Seek medical help."
+  },
+  {
+    "title": "Heat Stroke",
+    "category": "medical",
+    "keywords": ["heat", "stroke", "sun"],
+    "content": "Move the person to shade. Cool the body with water. Give fluids if conscious."
+  },
+  {
+    "title": "Choking First Aid",
+    "category": "medical",
+    "keywords": ["choking", "airway", "food"],
+    "content": "Perform abdominal thrusts. Encourage coughing if possible. Call for help if severe."
+  },
+  {
+    "title": "Electric Shock",
+    "category": "medical",
+    "keywords": ["electric", "shock", "current"],
+    "content": "Turn off power source first. Do not touch directly. Check breathing and call emergency services."
+  },
+  {
+    "title": "Drowning Response",
+    "category": "medical",
+    "keywords": ["drowning", "water", "breathing"],
+    "content": "Remove from water safely. Check breathing. Start CPR if needed."
+  },
+  {
+    "title": "Poison Ingestion",
+    "category": "medical",
+    "keywords": ["poison", "toxic", "ingestion"],
+    "content": "Do not induce vomiting. Rinse mouth. Seek medical help immediately."
+  },
+
+  {
+    "title": "Finding Water",
+    "category": "survival",
+    "keywords": ["water", "survival", "drink"],
+    "content": "Look for streams, collect rainwater, or use cloth to gather dew early morning."
+  },
+  {
+    "title": "Making Fire",
+    "category": "survival",
+    "keywords": ["fire", "heat", "survival"],
+    "content": "Use dry wood and spark tools. Keep fire small and controlled."
+  },
+  {
+    "title": "Building Shelter",
+    "category": "survival",
+    "keywords": ["shelter", "rain", "protection"],
+    "content": "Use branches and leaves to create a cover. Stay dry and protected from wind."
+  },
+  {
+    "title": "Finding Food",
+    "category": "survival",
+    "keywords": ["food", "survival", "eat"],
+    "content": "Look for fruits, nuts, and edible plants. Avoid unknown or toxic items."
+  },
+  {
+    "title": "Staying Warm",
+    "category": "survival",
+    "keywords": ["cold", "warm", "temperature"],
+    "content": "Layer clothing. Stay dry. Use fire or insulation from ground."
+  },
+  {
+    "title": "Signaling for Help",
+    "category": "survival",
+    "keywords": ["help", "signal", "rescue"],
+    "content": "Use smoke, mirrors, or loud sounds. Stay visible in open areas."
+  },
+  {
+    "title": "Avoiding Wild Animals",
+    "category": "survival",
+    "keywords": ["animal", "wild", "danger"],
+    "content": "Do not approach animals. Make noise to avoid surprising them. Keep distance."
+  },
+  {
+    "title": "Navigation Without Tools",
+    "category": "navigation",
+    "keywords": ["direction", "sun", "navigation"],
+    "content": "Use the sun's position. It rises in the east and sets in the west."
+  },
+  {
+    "title": "Using a Compass",
+    "category": "navigation",
+    "keywords": ["compass", "direction", "north"],
+    "content": "Hold compass flat. The needle points to north. Align with map direction."
+  },
+  {
+    "title": "Finding North at Night",
+    "category": "navigation",
+    "keywords": ["stars", "north", "night"],
+    "content": "Locate the North Star. It indicates true north direction."
+  }
+]
